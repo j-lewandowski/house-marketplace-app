@@ -9,6 +9,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase.config';
 
@@ -112,8 +113,6 @@ function CreateListing() {
     } else {
       geolocation.lat = latitude;
       geolocation.lng = longitude;
-      location = address;
-      console.log(geolocation, location);
     }
 
     const storeImage = async (image) => {
@@ -162,9 +161,21 @@ function CreateListing() {
       return;
     });
 
-    console.log(imgUrls);
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    };
 
+    delete formDataCopy.images;
+    delete formDataCopy.address;
+    formDataCopy.location = address;
+    !formDataCopy.offer && delete formDataCopy.discountedPrice;
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
     setLoading(false);
+    toast.success('Listing saved');
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
 
   const onMutate = (e) => {
@@ -254,7 +265,7 @@ function CreateListing() {
               <input
                 className="formInputSmall"
                 type="number"
-                id="bedrooms"
+                id="bathrooms"
                 value={bathrooms}
                 onChange={onMutate}
                 min="1"
