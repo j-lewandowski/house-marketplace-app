@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import rentCategoryImage from '../assets/jpg/rentCategoryImage.jpg';
 import sellCategoryImage from '../assets/jpg/sellCategoryImage.jpg';
+import Slider from '../components/Slider';
+import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+SwiperCore.use([Navigation, Pagination, Scrollbar]);
 
 function Explore() {
   return (
@@ -10,7 +14,7 @@ function Explore() {
       </header>
 
       <main>
-        {/* Slider */}
+        <Slider />
         <p className="exploreCategoryHeading">Categories</p>
         <div className="exploreCategories">
           <Link to="/category/rent">
